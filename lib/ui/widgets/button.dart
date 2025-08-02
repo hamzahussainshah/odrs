@@ -40,8 +40,8 @@ class CustomButton extends StatelessWidget {
         backgroundColor: isDisabled
             ? AppColors.gray100
             : isBgColor
-            ? backgroundColor ?? AppColors.blueDark
-            : AppColors.white,
+                ? backgroundColor ?? AppColors.blueDark
+                : AppColors.white,
         minimumSize: minimumSize ?? Size(double.infinity, 50.h),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(100.r),
@@ -66,12 +66,12 @@ class CustomButton extends StatelessWidget {
             text,
             style: buttonTextStyle ??
                 Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  color: isDisabled
-                      ? AppColors.gray300
-                      : !isBgColor
-                      ? textColor ?? AppColors.darkBlue
-                      : AppColors.white,
-                ),
+                      color: isDisabled
+                          ? AppColors.gray300
+                          : !isBgColor
+                              ? textColor ?? AppColors.darkBlue
+                              : AppColors.white,
+                    ),
           ),
         ],
       ),

@@ -64,8 +64,8 @@ class CustomTextField extends StatelessWidget {
         suffix: Text(
           suffixText ?? '',
           style: Theme.of(context).textTheme.displaySmall!.copyWith(
-            color: AppColors.gray500,
-          ),
+                color: AppColors.gray500,
+              ),
         ),
         contentPadding: EdgeInsets.symmetric(
           vertical: 12.h,
@@ -91,14 +91,14 @@ class CustomTextField extends StatelessWidget {
           ),
         ),
         floatingLabelStyle: Theme.of(context).textTheme.displaySmall!.copyWith(
-          color: AppColors.gray500, // Style when label is on border
-        ),
+              color: AppColors.gray500, // Style when label is on border
+            ),
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon != null
             ? GestureDetector(
-          onTap: onTapSuffix,
-          child: suffixIcon,
-        )
+                onTap: onTapSuffix,
+                child: suffixIcon,
+              )
             : null,
       ),
     );

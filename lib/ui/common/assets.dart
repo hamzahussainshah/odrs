@@ -5,7 +5,6 @@ const String flagsPath = "assets/flags";
 
 class AppImages {
   static const String appLogo = "$imagesPath/logo.png";
-
 }
 
 class AppIcons {

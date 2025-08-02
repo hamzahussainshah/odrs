@@ -18,9 +18,7 @@ class LoginViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-
-  void navigateToForgotPasswordView() {
-  }
+  void navigateToForgotPasswordView() {}
 
   void toggleRememberMe(bool? value) {
     if (value != null) {

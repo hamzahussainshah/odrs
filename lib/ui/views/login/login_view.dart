@@ -74,7 +74,6 @@ class LoginView extends StackedView<LoginViewModel> {
                     "Remember Me",
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
-        
                   Spacer(),
                   InkWell(
                     onTap: viewModel.navigateToForgotPasswordView,

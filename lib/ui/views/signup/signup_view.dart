@@ -50,22 +50,25 @@ class SignupView extends StackedView<SignupViewModel> {
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
                 20.verticalSpace,
-
                 10.verticalSpace,
-                CustomTextField(hintText: "First Name", controller: viewModel.firstNameController),
+                CustomTextField(
+                    hintText: "First Name",
+                    controller: viewModel.firstNameController),
                 10.verticalSpace,
-
-                CustomTextField(hintText: "Middle Name", controller: viewModel.middleNameController),
+                CustomTextField(
+                    hintText: "Middle Name",
+                    controller: viewModel.middleNameController),
                 10.verticalSpace,
-                CustomTextField(hintText: "Last Name", controller: viewModel.lastNameController),
+                CustomTextField(
+                    hintText: "Last Name",
+                    controller: viewModel.lastNameController),
                 10.verticalSpace,
-                CustomTextField(hintText: "Email", controller: viewModel.emailController),
+                CustomTextField(
+                    hintText: "Email", controller: viewModel.emailController),
                 20.verticalSpace,
-
                 PhoneField(
                     controller: viewModel.phoneController,
                     countryCodeController: viewModel.phoneCountryController),
-
                 10.verticalSpace,
                 CustomTextField(
                     hintText: "Password",
@@ -110,8 +113,8 @@ class SignupView extends StackedView<SignupViewModel> {
                       child: Text(
                         "privacy policy & terms",
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
                       ),
                     ),
                   ],
@@ -130,8 +133,8 @@ class SignupView extends StackedView<SignupViewModel> {
                       child: Text(
                         "Sign in instead",
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
                       ),
                     ),
                   ],

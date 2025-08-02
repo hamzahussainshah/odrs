@@ -40,7 +40,6 @@ class PhoneField extends StatelessWidget {
       controller: controller,
       style: Theme.of(context).textTheme.bodyMedium,
       dropdownTextStyle: Theme.of(context).textTheme.bodyMedium,
-
       decoration: InputDecoration(
         fillColor: Theme.of(context).scaffoldBackgroundColor,
         filled: true,
