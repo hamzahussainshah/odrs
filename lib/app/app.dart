@@ -9,6 +9,13 @@ import 'package:odrs/ui/views/login/login_view.dart';
 import 'package:odrs/ui/views/signup/signup_view.dart';
 import 'package:odrs/ui/views/select_account_type/select_account_type_view.dart';
 import 'package:odrs/ui/views/court_form/court_form_view.dart';
+import 'package:odrs/ui/views/navigation/navigation_view.dart';
+import 'package:odrs/ui/views/cases_dashboard/cases_dashboard_view.dart';
+import 'package:odrs/ui/views/initiating_party/initiating_party_view.dart';
+import 'package:odrs/ui/views/icadrp_agreement/icadrp_agreement_view.dart';
+import 'package:odrs/ui/views/case_details/case_details_view.dart';
+import 'package:odrs/ui/views/mediator_details/mediator_details_view.dart';
+import 'package:odrs/ui/views/settings/settings_view.dart';
 // @stacked-import
 
 @StackedApp(
@@ -19,6 +26,13 @@ import 'package:odrs/ui/views/court_form/court_form_view.dart';
     MaterialRoute(page: SignupView),
     MaterialRoute(page: SelectAccountTypeView),
     MaterialRoute(page: CourtFormView),
+    MaterialRoute(page: NavigationView),
+    MaterialRoute(page: CasesDashboardView),
+    MaterialRoute(page: InitiatingPartyView),
+    MaterialRoute(page: IcadrpAgreementView),
+    MaterialRoute(page: CaseDetailsView),
+    MaterialRoute(page: MediatorDetailsView),
+    MaterialRoute(page: SettingsView),
 // @stacked-route
   ],
   dependencies: [

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:odrs/ui/common/assets.dart';
+import 'package:odrs/ui/widgets/app_bar.dart';
 import 'package:odrs/ui/widgets/button.dart';
 import 'package:odrs/ui/widgets/custom_image_view.dart';
 import 'package:odrs/ui/widgets/text_field.dart';
@@ -18,28 +19,14 @@ class LoginView extends StackedView<LoginViewModel> {
     Widget? child,
   ) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      appBar: const CustomAppBar(),
       body: SafeArea(
         child: Container(
           padding: const EdgeInsets.only(left: 25.0, right: 25.0),
           child: Column(
             children: [
-              Row(
-                children: [
-                  CustomImageView(
-                    imagePath: AppImages.appLogo,
-                    height: 50.0,
-                    width: 50.0,
-                    fit: BoxFit.contain,
-                  ),
-                  10.horizontalSpace,
-                  Text(
-                    'ODRS',
-                    style: Theme.of(context).textTheme.displayMedium,
-                  ),
-                ],
-              ),
-              30.verticalSpace,
+              20.verticalSpace,
               Text(
                 "Welcome to ODRS",
                 style: Theme.of(context).textTheme.headlineMedium,
@@ -74,7 +61,7 @@ class LoginView extends StackedView<LoginViewModel> {
                     "Remember Me",
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
-                  Spacer(),
+                  const Spacer(),
                   InkWell(
                     onTap: viewModel.navigateToForgotPasswordView,
                     child: Text(
@@ -86,7 +73,11 @@ class LoginView extends StackedView<LoginViewModel> {
                   ),
                 ],
               ),
-              CustomButton(text: "Login", onPressed: () {}),
+              CustomButton(
+                  text: "Login",
+                  onPressed: () {
+                    viewModel.navigateToNavigationView();
+                  }),
               20.verticalSpace,
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,

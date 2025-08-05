@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_intl_phone_field/flutter_intl_phone_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:odrs/ui/common/app_colors.dart';
+import 'package:odrs/ui/widgets/app_bar.dart';
 import 'package:odrs/ui/widgets/phone_field.dart';
 import 'package:stacked/stacked.dart';
 
@@ -22,6 +23,7 @@ class SignupView extends StackedView<SignupViewModel> {
   ) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
+      appBar: const CustomAppBar(),
       body: SafeArea(
         child: Container(
           padding: const EdgeInsets.only(left: 25.0, right: 25.0),
@@ -29,21 +31,6 @@ class SignupView extends StackedView<SignupViewModel> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    CustomImageView(
-                      imagePath: AppImages.appLogo,
-                      height: 50.0,
-                      width: 50.0,
-                      fit: BoxFit.contain,
-                    ),
-                    10.horizontalSpace,
-                    Text(
-                      'ODRS',
-                      style: Theme.of(context).textTheme.displayMedium,
-                    ),
-                  ],
-                ),
                 30.verticalSpace,
                 Text(
                   "Welcome to ODRS",

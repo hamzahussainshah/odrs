@@ -28,6 +28,10 @@ class LoginViewModel extends BaseViewModel {
   }
 
   void navigateToSignUpView() {
-    _navigationService.navigateToSignupView();
+    _navigationService.navigateToSelectAccountTypeView();
+  }
+
+  void navigateToNavigationView() {
+    _navigationService.navigateToNavigationView();
   }
 }

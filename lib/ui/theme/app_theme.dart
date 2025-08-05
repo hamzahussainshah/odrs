@@ -25,5 +25,20 @@ ThemeData appTheme(BuildContext context) {
         borderRadius: BorderRadius.circular(4.0),
       ),
     ),
+    colorScheme: const ColorScheme(
+      brightness: Brightness.light,
+      primary: AppColors.blueDark,
+      onPrimary: AppColors.white,
+      secondary: AppColors.blue,
+      onSecondary: AppColors.white,
+      error: Colors.red,
+      onError: AppColors.white,
+      surface: AppColors.white,
+      onSurface: AppColors.textColor,
+      outline: AppColors.gray300,
+      shadow: AppColors.gray200,
+      surfaceContainerHighest: AppColors.gray100,
+      onSurfaceVariant: AppColors.gray700,
+    ),
   );
 }
