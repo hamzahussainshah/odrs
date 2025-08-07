@@ -152,4 +152,5 @@ class NavigationViewModel extends IndexTrackingViewModel {
   void navigateToSettingsView() {
     _navigationService.navigateToSettingsView();
   }
+
 }

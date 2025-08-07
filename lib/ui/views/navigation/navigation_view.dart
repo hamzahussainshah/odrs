@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:stacked/stacked.dart';
-
 import '../../widgets/common/custom_drawer/custom_drawer.dart';
 import 'navigation_viewmodel.dart';
 
@@ -25,7 +24,7 @@ class NavigationView extends StackedView<NavigationViewModel> {
       ),
       child: Scaffold(
         key: viewModel.scaffoldKey,
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         drawer: CustomDrawer(
           onCloseTap: () => viewModel.scaffoldKey.currentState?.openEndDrawer(),
           onTapCaseDashboard: () {
@@ -61,7 +60,7 @@ class NavigationView extends StackedView<NavigationViewModel> {
             viewModel.isDrawerOpen
                 ? viewModel.drawerLabels[viewModel.drawerIndex]
                 : viewModel.bottomNavLabels[viewModel.currentIndex],
-            style: Theme.of(context).textTheme.titleMedium,
+            style: Theme.of(context).textTheme.titleLarge,
           ),
           leading: IconButton(
             icon: Icon(Icons.menu),

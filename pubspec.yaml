@@ -8,12 +8,15 @@ environment:
 
 dependencies:
   cached_network_image: ^3.4.1
+  country_picker: ^2.0.27
+  file_picker: ^10.2.1
   flutter:
     sdk: flutter
   flutter_intl_phone_field: ^0.0.7
   flutter_screenutil: ^5.9.3
   flutter_svg: ^2.2.0
   google_fonts: ^6.3.0
+  shared_preferences: ^2.5.3
   stacked: ^3.4.0
   stacked_services: ^1.1.0
 

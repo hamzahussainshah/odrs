@@ -35,13 +35,15 @@ class CustomDrawer extends StackedView<CustomDrawerModel> {
 
   @override
   Widget builder(
-    BuildContext context,
-    CustomDrawerModel viewModel,
-    Widget? child,
-  ) {
+      BuildContext context,
+      CustomDrawerModel viewModel,
+      Widget? child,
+      ) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Drawer(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.r)),
-      backgroundColor: AppColors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       elevation: 0,
       width: 0.8.sw,
       child: Padding(
@@ -54,10 +56,13 @@ class CustomDrawer extends StackedView<CustomDrawerModel> {
               children: [
                 InkWell(
                   onTap: onCloseTap,
+                  borderRadius: BorderRadius.circular(20.r),
                   child: Container(
                     padding: EdgeInsets.all(6.r),
                     decoration: BoxDecoration(
-                      color: AppColors.gray50,
+                      color: isDarkMode
+                          ? Colors.grey.shade800
+                          : AppColors.gray50,
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -77,7 +82,7 @@ class CustomDrawer extends StackedView<CustomDrawerModel> {
               icon: Icons.dashboard,
               context: context,
               onTap: onTapCaseDashboard,
-              isSelected: selectedDrawerIndex == 0, // Check if selected
+              isSelected: selectedDrawerIndex == 0,
             ),
             10.verticalSpace,
             buildDrawerIconContainer(
@@ -85,39 +90,39 @@ class CustomDrawer extends StackedView<CustomDrawerModel> {
               icon: Icons.balance,
               context: context,
               onTap: onTapCourtForm,
-              isSelected: selectedDrawerIndex == 1, // Check if selected
+              isSelected: selectedDrawerIndex == 1,
             ),
             10.verticalSpace,
             buildDrawerIconContainer(
               label: "Initiating Party",
-              icon: CupertinoIcons.pencil,
+              icon: Icons.person_add_alt_1,
               context: context,
-              onTap: onTapCaseDashboard,
-              isSelected: selectedDrawerIndex == 2, // Check if selected
+              onTap: onTapInitiatingParty,
+              isSelected: selectedDrawerIndex == 2,
             ),
             10.verticalSpace,
             buildDrawerIconContainer(
               label: "ICADRP Feedback",
               icon: Icons.feedback,
               context: context,
-              onTap: onTapCaseDashboard,
-              isSelected: selectedDrawerIndex == 3, // Check if selected
+              onTap: onTapICADRPFeedback,
+              isSelected: selectedDrawerIndex == 3,
             ),
             10.verticalSpace,
             buildDrawerIconContainer(
               label: "Case Details",
-              icon: CupertinoIcons.doc_on_clipboard_fill,
+              icon: Icons.article,
               context: context,
-              onTap: onTapCaseDashboard,
-              isSelected: selectedDrawerIndex == 4, // Check if selected
+              onTap: onTapCaseDetails,
+              isSelected: selectedDrawerIndex == 4,
             ),
             10.verticalSpace,
             buildDrawerIconContainer(
               label: "Mediator Details",
               icon: Icons.person_search,
               context: context,
-              onTap: onTapCaseDashboard,
-              isSelected: selectedDrawerIndex == 5, // Check if selected
+              onTap: onTapMediatorDetails,
+              isSelected: selectedDrawerIndex == 5,
             ),
             10.verticalSpace,
             buildDrawerIconContainer(
@@ -125,7 +130,7 @@ class CustomDrawer extends StackedView<CustomDrawerModel> {
               icon: Icons.settings,
               context: context,
               onTap: onTapSettings,
-              isSelected: selectedDrawerIndex == 6, // Check if selected
+              isSelected: selectedDrawerIndex == 6,
             ),
             const Spacer(),
             Padding(
@@ -150,17 +155,27 @@ class CustomDrawer extends StackedView<CustomDrawerModel> {
     required IconData icon,
     required void Function() onTap,
     required bool isSelected,
-    required BuildContext context, // Add isSelected parameter
+    required BuildContext context,
   }) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return InkWell(
       onTap: onTap,
+      borderRadius: BorderRadius.circular(12.r),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 5),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+        margin: EdgeInsets.only(right: 16.w),
         decoration: BoxDecoration(
-          // color: isSelected
-          //     ? AppColors.red10
-          //     : Colors.transparent, // Conditional background
+          color: isSelected
+              ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(12.r),
+          border: isSelected
+              ? Border.all(
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+            width: 1,
+          )
+              : null,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -172,11 +187,17 @@ class CustomDrawer extends StackedView<CustomDrawerModel> {
                   ? Theme.of(context).colorScheme.primary
                   : Theme.of(context).colorScheme.onSurfaceVariant,
             ),
-            8.horizontalSpace,
-            Text(
-              label,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: AppColors.gray500, fontWeight: FontWeight.w500),
+            12.horizontalSpace,
+            Expanded(
+              child: Text(
+                label,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: isSelected
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.onSurface,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                ),
+              ),
             ),
           ],
         ),
