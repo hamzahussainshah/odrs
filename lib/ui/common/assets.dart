@@ -10,5 +10,5 @@ class AppImages {
 class AppIcons {
   // static String countryFlag(String isoCode) => "$flagsPath/$isoCode.png";
 
-  static const String flashOfferBurger = "$iconsPath/flash_offer_burger.svg";
+  // static const String flashOfferBurger = "$iconsPath/flash_offer_burger.svg";
 }

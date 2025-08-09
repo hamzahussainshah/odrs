@@ -1,288 +1,431 @@
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
-import 'package:file_picker/file_picker.dart';
 
 class CourtFormViewModel extends BaseViewModel {
-  // Text Controllers
+  // Basic form controllers
   final TextEditingController courtCaseNumberController = TextEditingController();
   final TextEditingController odrIdController = TextEditingController();
   final TextEditingController titleController = TextEditingController();
   final TextEditingController dateOfReferralController = TextEditingController();
   final TextEditingController closingDateController = TextEditingController();
-  final TextEditingController additionalNotesController = TextEditingController();
+
+  // Referred By controllers
   final TextEditingController firstNameController = TextEditingController();
-  final TextEditingController lastNameController = TextEditingController();
   final TextEditingController middleNameController = TextEditingController();
-  // Initiating Party A fields
-  final initiatingPartyAFirstNameController = TextEditingController();
-  final initiatingPartyAMiddleNameController = TextEditingController();
-  final initiatingPartyALastNameController = TextEditingController();
-  TextEditingController nationalityPartyAController =TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
 
-  List<String> initiatingPartyATitleOptions = ['Mr.', 'Ms.', 'Mrs.', 'Dr.'];
-  String? get selectedInitiatingPartyATitle => _selectedInitiatingPartyATitle;
-  void setSelectedInitiatingPartyATitle(String value) {
-    _selectedInitiatingPartyATitle = value;
+  // Dropdown options
+  final List<String> natureOfDisputeOptions = ['Contract Dispute', 'Property Dispute', 'Family Matter', 'Commercial Dispute'];
+  final List<String> mediatorOptions = ['John Doe', 'Jane Smith', 'Robert Brown'];
+  final List<String> titleOptions = ['Mr.', 'Mrs.', 'Ms.', 'Dr.', 'Prof.'];
+  final List<String> courtNameOptions = ['Supreme Court', 'High Court', 'District Court'];
+  final List<String> jurisdictionOptions = ['Federal', 'State', 'Local'];
+  final List<String> initiatingPartyType = ['Individual', 'Corporation', 'Government'];
+  final List<String> initiatingPartyATitleOptions = ['Mr.', 'Mrs.', 'Ms.', 'Dr.', 'Prof.'];
+
+  // Selected values
+  String? selectedNatureOfDispute;
+  String? selectedMediator;
+  String? selectedTitle;
+  String? selectedCourtName;
+  String? selectedJurisdiction;
+  String? selectedInitiatingPartyType;
+  String? selectedPartyTypeToAdd;
+
+  // Dynamic Lists for parties
+  List<String> initiatingParties = [];
+  List<String> respondingParties = [];
+
+  // Maps to store party data
+  Map<String, Map<String, dynamic>> initiatingPartiesData = {};
+  Map<String, Map<String, dynamic>> respondingPartiesData = {};
+
+  // Legal Council Maps
+  Map<String, Map<String, dynamic>> initiatingPartyLegalCouncils = {};
+  Map<String, Map<String, dynamic>> respondingPartyLegalCouncils = {};
+
+  // File handling
+  List<dynamic> selectedFiles = [];
+
+ CourtFormViewModel(){
+   addNewParty(isInitialSetup: true);
+ }
+
+  // Party Management Methods
+  void addNewParty({bool isInitialSetup = false}) {
+    if (selectedPartyTypeToAdd == null && !isInitialSetup) return;
+
+    String partyId = DateTime.now().millisecondsSinceEpoch.toString();
+
+    if (isInitialSetup || selectedPartyTypeToAdd == "Initiating Party") {
+      initiatingParties.add(partyId);
+      initiatingPartiesData[partyId] = _createPartyData();
+    } else if (selectedPartyTypeToAdd == "Responding Party") {
+      respondingParties.add(partyId);
+      respondingPartiesData[partyId] = _createPartyData();
+    }
+
+    if (!isInitialSetup) {
+      selectedPartyTypeToAdd = null;
+    }
     notifyListeners();
   }
-  // Add these to your CourtFormViewModel class
 
-  final initiatingPartyAPassportController = TextEditingController();
-  final initiatingPartyAPhoneController = TextEditingController();
-  final initiatingPartyACountryCodeController = TextEditingController();
-  final initiatingPartyAMobileController = TextEditingController();
-  final initiatingPartyAMobileCountryCodeController = TextEditingController();
-  final initiatingPartyAWhatsappController = TextEditingController();
-  final initiatingPartyAWhatsappCountryCodeController = TextEditingController();
-  final initiatingPartyAEmailController = TextEditingController();
-  final initiatingPartyAAlternateEmailController = TextEditingController();
-
-  // Dropdown Values
-  String? _selectedNatureOfDispute;
-  String? _selectedMediator;
-  String? _selectedTitle;
-  String? _selectedCourtName;
-  String? _selectedJurisdiction;
-  String? _selectedInitiatingPartyType;
-  String? _selectedInitiatingPartyATitle;
-
-  CourtFormViewModel(){
-    _selectedNatureOfDispute = natureOfDisputeOptions.first;
-    _selectedMediator = mediatorOptions.first;
-    _selectedTitle = titleOptions.first;
-    _selectedCourtName = courtNameOptions.first;
-    _selectedJurisdiction = jurisdictionOptions.first;
-    _selectedInitiatingPartyATitle = initiatingPartyATitleOptions.first;
-
-    notifyListeners();
-  }
-  // Selected Files
-  List<PlatformFile> _selectedFiles = [];
-  // In CourtFormViewModel
-  bool isCurrentAddressChecked = false;
-  bool isPermanentAddressChecked = false;
-
-  void setCurrentAddressChecked(bool value) {
-    isCurrentAddressChecked = value;
+  void removeInitiatingParty(String partyId, int index) {
+    initiatingParties.removeAt(index);
+    initiatingPartiesData.remove(partyId);
+    initiatingPartyLegalCouncils.remove(partyId);
     notifyListeners();
   }
 
-  void setPermanentAddressChecked(bool value) {
-    isPermanentAddressChecked = value;
+  void removeRespondingParty(String partyId, int index) {
+    respondingParties.removeAt(index);
+    respondingPartiesData.remove(partyId);
+    respondingPartyLegalCouncils.remove(partyId);
     notifyListeners();
   }
 
-  // Dropdown Options
-  final List<String> natureOfDisputeOptions = [
-    'None',
-    'Contract Dispute',
-    'Family Law',
-    'Property Dispute',
-    'Other'
-  ];
+  // Legal Council Management
+  void addLegalCouncilForInitiatingParty(String partyId) {
+    initiatingPartyLegalCouncils[partyId] = _createLegalCouncilData();
+    notifyListeners();
+  }
 
-  final List<String> mediatorOptions = [
-    'None'
-  ];
+  void removeLegalCouncilForInitiatingParty(String partyId) {
+    initiatingPartyLegalCouncils.remove(partyId);
+    notifyListeners();
+  }
 
-  final List<String> titleOptions = [
-    'Mr',
-    'Ms',
-    'Dr'
-  ];
+  void addLegalCouncilForRespondingParty(String partyId) {
+    respondingPartyLegalCouncils[partyId] = _createLegalCouncilData();
+    notifyListeners();
+  }
 
-  final List<String> courtNameOptions = [
-    'District Court'
-  ];
+  void removeLegalCouncilForRespondingParty(String partyId) {
+    respondingPartyLegalCouncils.remove(partyId);
+    notifyListeners();
+  }
 
-  final List<String> jurisdictionOptions = [
-    'None',
-    'Islamabad'
-  ];
-  final List<String> initiatingPartyType = [
-    'Individual',
-    'Company',
-  ];
+  // Data Creation Methods
+  Map<String, dynamic> _createPartyData() {
+    return {
+      'selectedTitle': null,
+      'firstNameController': TextEditingController(),
+      'middleNameController': TextEditingController(),
+      'lastNameController': TextEditingController(),
+      'nationalityController': TextEditingController(),
+      'passportController': TextEditingController(),
+      'phoneController': TextEditingController(),
+      'phoneCountryCodeController': TextEditingController(),
+      'mobileController': TextEditingController(),
+      'mobileCountryCodeController': TextEditingController(),
+      'whatsappController': TextEditingController(),
+      'whatsappCountryCodeController': TextEditingController(),
+      'emailController': TextEditingController(),
+      'alternateEmailController': TextEditingController(),
+      'isCurrentAddressChecked': false,
+      'isPermanentAddressChecked': false,
+      // Address data
+      'currentAddress': _createAddressData(),
+      'permanentAddress': _createAddressData(),
+    };
+  }
 
+  Map<String, dynamic> _createLegalCouncilData() {
+    return {
+      'selectedTitle': null,
+      'firstNameController': TextEditingController(),
+      'middleNameController': TextEditingController(),
+      'lastNameController': TextEditingController(),
+      'emailController': TextEditingController(),
+      'phoneController': TextEditingController(),
+      'phoneCountryCodeController': TextEditingController(),
+      'isCurrentAddressChecked': false,
+      'isPermanentAddressChecked': false,
+      // Address data
+      'currentAddress': _createAddressData(),
+      'permanentAddress': _createAddressData(),
+    };
+  }
 
+  Map<String, dynamic> _createAddressData() {
+    return {
+      'streetAddressController': TextEditingController(),
+      'appartmentController': TextEditingController(),
+      'postalCodeController': TextEditingController(),
+      'selectedCountry': null,
+      'selectedState': null,
+      'selectedCity': null,
+    };
+  }
 
-  // Getters
-  String? get selectedNatureOfDispute => _selectedNatureOfDispute;
-  String? get selectedMediator => _selectedMediator;
-  String? get selectedTitle => _selectedTitle;
-  String? get selectedCourtName => _selectedCourtName;
-  String? get selectedJurisdiction => _selectedJurisdiction;
-  List<PlatformFile> get selectedFiles => _selectedFiles;
-  String? get selectedInitiatingPartyType => _selectedInitiatingPartyType;
+  // Data Getter Methods
+  Map<String, dynamic> getInitiatingPartyData(String partyId) {
+    return initiatingPartiesData[partyId] ?? {};
+  }
 
-  // Setters
+  Map<String, dynamic> getRespondingPartyData(String partyId) {
+    return respondingPartiesData[partyId] ?? {};
+  }
+
+  Map<String, dynamic> getInitiatingPartyLegalCouncilData(String partyId) {
+    return initiatingPartyLegalCouncils[partyId] ?? {};
+  }
+
+  Map<String, dynamic> getRespondingPartyLegalCouncilData(String partyId) {
+    return respondingPartyLegalCouncils[partyId] ?? {};
+  }
+
+  Map<String, dynamic> getInitiatingPartyAddressData(String partyId, bool isPermanent) {
+    final partyData = initiatingPartiesData[partyId] ?? {};
+    return isPermanent ? partyData['permanentAddress'] ?? {} : partyData['currentAddress'] ?? {};
+  }
+
+  Map<String, dynamic> getRespondingPartyAddressData(String partyId, bool isPermanent) {
+    final partyData = respondingPartiesData[partyId] ?? {};
+    return isPermanent ? partyData['permanentAddress'] ?? {} : partyData['currentAddress'] ?? {};
+  }
+
+  Map<String, dynamic> getInitiatingPartyLegalCouncilAddressData(String partyId, bool isPermanent) {
+    final legalCouncilData = initiatingPartyLegalCouncils[partyId] ?? {};
+    return isPermanent ? legalCouncilData['permanentAddress'] ?? {} : legalCouncilData['currentAddress'] ?? {};
+  }
+
+  Map<String, dynamic> getRespondingPartyLegalCouncilAddressData(String partyId, bool isPermanent) {
+    final legalCouncilData = respondingPartyLegalCouncils[partyId] ?? {};
+    return isPermanent ? legalCouncilData['permanentAddress'] ?? {} : legalCouncilData['currentAddress'] ?? {};
+  }
+
+  // Data Setter Methods
+  void setInitiatingPartyData(String partyId, String key, dynamic value) {
+    if (initiatingPartiesData.containsKey(partyId)) {
+      initiatingPartiesData[partyId]![key] = value;
+      notifyListeners();
+    }
+  }
+
+  void setRespondingPartyData(String partyId, String key, dynamic value) {
+    if (respondingPartiesData.containsKey(partyId)) {
+      respondingPartiesData[partyId]![key] = value;
+      notifyListeners();
+    }
+  }
+
+  void setInitiatingPartyLegalCouncilData(String partyId, String key, dynamic value) {
+    if (initiatingPartyLegalCouncils.containsKey(partyId)) {
+      initiatingPartyLegalCouncils[partyId]![key] = value;
+      notifyListeners();
+    }
+  }
+
+  void setRespondingPartyLegalCouncilData(String partyId, String key, dynamic value) {
+    if (respondingPartyLegalCouncils.containsKey(partyId)) {
+      respondingPartyLegalCouncils[partyId]![key] = value;
+      notifyListeners();
+    }
+  }
+
+  void setInitiatingPartyAddressData(String partyId, bool isPermanent, String key, dynamic value) {
+    if (initiatingPartiesData.containsKey(partyId)) {
+      final addressKey = isPermanent ? 'permanentAddress' : 'currentAddress';
+      initiatingPartiesData[partyId]![addressKey][key] = value;
+      notifyListeners();
+    }
+  }
+
+  void setRespondingPartyAddressData(String partyId, bool isPermanent, String key, dynamic value) {
+    if (respondingPartiesData.containsKey(partyId)) {
+      final addressKey = isPermanent ? 'permanentAddress' : 'currentAddress';
+      respondingPartiesData[partyId]![addressKey][key] = value;
+      notifyListeners();
+    }
+  }
+
+  void setInitiatingPartyLegalCouncilAddressData(String partyId, bool isPermanent, String key, dynamic value) {
+    if (initiatingPartyLegalCouncils.containsKey(partyId)) {
+      final addressKey = isPermanent ? 'permanentAddress' : 'currentAddress';
+      initiatingPartyLegalCouncils[partyId]![addressKey][key] = value;
+      notifyListeners();
+    }
+  }
+
+  void setRespondingPartyLegalCouncilAddressData(String partyId, bool isPermanent, String key, dynamic value) {
+    if (respondingPartyLegalCouncils.containsKey(partyId)) {
+      final addressKey = isPermanent ? 'permanentAddress' : 'currentAddress';
+      respondingPartyLegalCouncils[partyId]![addressKey][key] = value;
+      notifyListeners();
+    }
+  }
+
+  // Dropdown Setters
   void setSelectedNatureOfDispute(String value) {
-    _selectedNatureOfDispute = value;
+    selectedNatureOfDispute = value;
     notifyListeners();
   }
 
   void setSelectedMediator(String value) {
-    _selectedMediator = value;
+    selectedMediator = value;
     notifyListeners();
   }
 
   void setSelectedTitle(String value) {
-    _selectedTitle = value;
+    selectedTitle = value;
     notifyListeners();
   }
 
   void setSelectedCourtName(String value) {
-    _selectedCourtName = value;
+    selectedCourtName = value;
     notifyListeners();
   }
 
   void setSelectedJurisdiction(String value) {
-    _selectedJurisdiction = value;
-    notifyListeners();
-  }
-  void setSelectedInitiatingPartyType(String value) {
-    _selectedInitiatingPartyType = value;
+    selectedJurisdiction = value;
     notifyListeners();
   }
 
-  // Date Selection
+  void setSelectedInitiatingPartyType(String value) {
+    selectedInitiatingPartyType = value;
+    notifyListeners();
+  }
+
+  void setSelectedPartyTypeToAdd(String value) {
+    selectedPartyTypeToAdd = value;
+    notifyListeners();
+  }
+
+  // Legacy methods for compatibility (you may need to update these based on your existing code)
+  void setSelectedInitiatingPartyATitle(String value) {
+    // This method might need to be updated based on which party you're referring to
+    notifyListeners();
+  }
+
+  void setSelectedPartyACountry(String value) {
+    // Update based on current context
+    notifyListeners();
+  }
+
+  void setSelectedPartyAState(String value) {
+    // Update based on current context
+    notifyListeners();
+  }
+
+  void setSelectedPartyACity(String value) {
+    // Update based on current context
+    notifyListeners();
+  }
+
+  void setCurrentAddressChecked(bool value) {
+    // Update based on current context - you'll need to track which party is being modified
+    notifyListeners();
+  }
+
+  void setPermanentAddressChecked(bool value) {
+    // Update based on current context - you'll need to track which party is being modified
+    notifyListeners();
+  }
+
+  // Legacy properties for backward compatibility
+  bool get isCurrentAddressChecked => false; // Update based on current context
+  bool get isPermanentAddressChecked => false; // Update based on current context
+
+  // Legacy controllers - these should be removed and replaced with dynamic ones
+  final TextEditingController initiatingPartyAFirstNameController = TextEditingController();
+  final TextEditingController initiatingPartyAMiddleNameController = TextEditingController();
+  final TextEditingController initiatingPartyALastNameController = TextEditingController();
+  final TextEditingController nationalityPartyAController = TextEditingController();
+  final TextEditingController initiatingPartyAPassportController = TextEditingController();
+  final TextEditingController initiatingPartyAPhoneController = TextEditingController();
+  final TextEditingController initiatingPartyACountryCodeController = TextEditingController();
+  final TextEditingController initiatingPartyAMobileController = TextEditingController();
+  final TextEditingController initiatingPartyAMobileCountryCodeController = TextEditingController();
+  final TextEditingController initiatingPartyAWhatsappController = TextEditingController();
+  final TextEditingController initiatingPartyAWhatsappCountryCodeController = TextEditingController();
+  final TextEditingController initiatingPartyAEmailController = TextEditingController();
+  final TextEditingController initiatingPartyAAlternateEmailController = TextEditingController();
+  final TextEditingController streetAddressInitiatingPartyAController = TextEditingController();
+  final TextEditingController appartmentUnitSuiteNumberInitiatingPartyAController = TextEditingController();
+  final TextEditingController postalCodeInitiatingPartyAController = TextEditingController();
+
+  String? selectedInitiatingPartyATitle;
+
+  // Date Selection Methods
   Future<void> selectDate(BuildContext context, {bool isClosingDate = false}) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: Theme.of(context).colorScheme.primary,
-              onPrimary: Theme.of(context).colorScheme.onPrimary,
-              surface: Theme.of(context).colorScheme.surface,
-              onSurface: Theme.of(context).colorScheme.onSurface,
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: Theme.of(context).colorScheme.primary,
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
+      lastDate: DateTime(2100),
     );
-
     if (picked != null) {
-      final formattedDate = "${picked.day}/${picked.month}/${picked.year}";
       if (isClosingDate) {
-        closingDateController.text = formattedDate;
+        closingDateController.text = "${picked.day}/${picked.month}/${picked.year}";
       } else {
-        dateOfReferralController.text = formattedDate;
+        dateOfReferralController.text = "${picked.day}/${picked.month}/${picked.year}";
       }
       notifyListeners();
     }
   }
 
-  // File Selection
-  Future<void> selectFiles() async {
-    try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        allowMultiple: true,
-        type: FileType.any,
-        allowedExtensions: null,
-      );
-
-      if (result != null) {
-        _selectedFiles = result.files;
-        notifyListeners();
-      }
-    } catch (e) {
-      print('Error selecting files: $e');
-    }
-  }
-
-  // Remove selected file
-  void removeFile(int index) {
-    if (index >= 0 && index < _selectedFiles.length) {
-      _selectedFiles.removeAt(index);
-      notifyListeners();
-    }
-  }
-
-  // Clear all files
-  void clearFiles() {
-    _selectedFiles.clear();
+  // File Management
+  void selectFiles() {
+    // Implement file selection logic
+    // This would typically use file_picker package
     notifyListeners();
   }
 
-  // Form validation
-  bool get isFormValid {
-    return courtCaseNumberController.text.isNotEmpty &&
-        odrIdController.text.isNotEmpty &&
-        titleController.text.isNotEmpty &&
-        dateOfReferralController.text.isNotEmpty &&
-        firstNameController.text.isNotEmpty &&
-        lastNameController.text.isNotEmpty;
+  void removeFile(int index) {
+    if (index >= 0 && index < selectedFiles.length) {
+      selectedFiles.removeAt(index);
+      notifyListeners();
+    }
   }
 
-  // Submit form
+  // Form Submission
   Future<void> submitForm() async {
-    if (!isFormValid) {
-      // Show validation error
-      return;
-    }
-
     setBusy(true);
-
     try {
-      // Implement your form submission logic here
-      await Future.delayed(const Duration(seconds: 2)); // Simulate API call
+      // Implement form submission logic
+      await Future.delayed(Duration(seconds: 2)); // Simulate API call
 
-      // Clear form after successful submission
-      clearForm();
+      // Validate all parties data
+      for (String partyId in initiatingParties) {
+        final partyData = getInitiatingPartyData(partyId);
+        // Validate party data here
+      }
+
+      for (String partyId in respondingParties) {
+        final partyData = getRespondingPartyData(partyId);
+        // Validate party data here
+      }
+
+      // Submit to API
+      print("Form submitted successfully!");
 
     } catch (e) {
-      print('Error submitting form: $e');
+      // Handle error
+      print("Error submitting form: $e");
     } finally {
       setBusy(false);
     }
   }
 
-
-
-  // Clear form
-  void clearForm() {
-    courtCaseNumberController.clear();
-    odrIdController.clear();
-    titleController.clear();
-    dateOfReferralController.clear();
-    closingDateController.clear();
-    additionalNotesController.clear();
-    firstNameController.clear();
-    lastNameController.clear();
-    middleNameController.clear();
-
-    _selectedNatureOfDispute = natureOfDisputeOptions.first;
-    _selectedMediator = mediatorOptions.first;
-    _selectedTitle = titleOptions.first;
-    _selectedCourtName = courtNameOptions.first;
-    _selectedJurisdiction = jurisdictionOptions.first;
-
-    _selectedFiles.clear();
-    notifyListeners();
-  }
-
   @override
   void dispose() {
+    // Dispose basic controllers
     courtCaseNumberController.dispose();
     odrIdController.dispose();
     titleController.dispose();
     dateOfReferralController.dispose();
     closingDateController.dispose();
-    additionalNotesController.dispose();
     firstNameController.dispose();
-    lastNameController.dispose();
     middleNameController.dispose();
+    lastNameController.dispose();
+
+    // Dispose legacy controllers
+    initiatingPartyAFirstNameController.dispose();
+    initiatingPartyAMiddleNameController.dispose();
+    initiatingPartyALastNameController.dispose();
+    nationalityPartyAController.dispose();
     initiatingPartyAPassportController.dispose();
     initiatingPartyAPhoneController.dispose();
     initiatingPartyACountryCodeController.dispose();
@@ -292,6 +435,68 @@ class CourtFormViewModel extends BaseViewModel {
     initiatingPartyAWhatsappCountryCodeController.dispose();
     initiatingPartyAEmailController.dispose();
     initiatingPartyAAlternateEmailController.dispose();
+    streetAddressInitiatingPartyAController.dispose();
+    appartmentUnitSuiteNumberInitiatingPartyAController.dispose();
+    postalCodeInitiatingPartyAController.dispose();
+
+    // Dispose dynamic party controllers
+    for (var partyData in initiatingPartiesData.values) {
+      _disposePartyControllers(partyData);
+    }
+
+    for (var partyData in respondingPartiesData.values) {
+      _disposePartyControllers(partyData);
+    }
+
+    for (var legalCouncilData in initiatingPartyLegalCouncils.values) {
+      _disposeLegalCouncilControllers(legalCouncilData);
+    }
+
+    for (var legalCouncilData in respondingPartyLegalCouncils.values) {
+      _disposeLegalCouncilControllers(legalCouncilData);
+    }
+
     super.dispose();
+  }
+
+  void _disposePartyControllers(Map<String, dynamic> partyData) {
+    partyData['firstNameController']?.dispose();
+    partyData['middleNameController']?.dispose();
+    partyData['lastNameController']?.dispose();
+    partyData['nationalityController']?.dispose();
+    partyData['passportController']?.dispose();
+    partyData['phoneController']?.dispose();
+    partyData['phoneCountryCodeController']?.dispose();
+    partyData['mobileController']?.dispose();
+    partyData['mobileCountryCodeController']?.dispose();
+    partyData['whatsappController']?.dispose();
+    partyData['whatsappCountryCodeController']?.dispose();
+    partyData['emailController']?.dispose();
+    partyData['alternateEmailController']?.dispose();
+
+    // Dispose address controllers
+    _disposeAddressControllers(partyData['currentAddress']);
+    _disposeAddressControllers(partyData['permanentAddress']);
+  }
+
+  void _disposeLegalCouncilControllers(Map<String, dynamic> legalCouncilData) {
+    legalCouncilData['firstNameController']?.dispose();
+    legalCouncilData['middleNameController']?.dispose();
+    legalCouncilData['lastNameController']?.dispose();
+    legalCouncilData['emailController']?.dispose();
+    legalCouncilData['phoneController']?.dispose();
+    legalCouncilData['phoneCountryCodeController']?.dispose();
+
+    // Dispose address controllers
+    _disposeAddressControllers(legalCouncilData['currentAddress']);
+    _disposeAddressControllers(legalCouncilData['permanentAddress']);
+  }
+
+  void _disposeAddressControllers(Map<String, dynamic>? addressData) {
+    if (addressData != null) {
+      addressData['streetAddressController']?.dispose();
+      addressData['appartmentController']?.dispose();
+      addressData['postalCodeController']?.dispose();
+    }
   }
 }

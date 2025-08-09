@@ -44,7 +44,7 @@ class CustomButton extends StatelessWidget {
                 : AppColors.white,
         minimumSize: minimumSize ?? Size(double.infinity, 50.h),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(100.r),
+          borderRadius: BorderRadius.circular(20.r),
           side: isDisabled
               ? BorderSide.none
               : BorderSide(color: borderColor ?? AppColors.blueDark),
@@ -66,10 +66,11 @@ class CustomButton extends StatelessWidget {
             text,
             style: buttonTextStyle ??
                 Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  fontWeight: FontWeight.w700,
                       color: isDisabled
                           ? AppColors.gray300
                           : !isBgColor
-                              ? textColor ?? AppColors.darkBlue
+                              ? Theme.of(context).primaryColor ?? AppColors.darkBlue
                               : AppColors.white,
                     ),
           ),
